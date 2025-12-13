@@ -30,7 +30,7 @@ pipeline {
             steps {
                 sh '''
                 docker rm -f student-management || true
-                docker run -d --name student-management -p 9090:8080 jalelnasr/student-management:1.0.0
+                docker run -d --name student-management -p 8080:8080 jalelnasr/student-management:1.0.0
 
                 '''
             }
