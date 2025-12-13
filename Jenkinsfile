@@ -6,31 +6,33 @@ pipeline {
     }
 
     stages {
-        stage('Clone') {
+
+        stage('Checkout') {
             steps {
                 git branch: 'master',
                     url: 'https://github.com/jalelnasr/ProjetStudentsManagement.git'
             }
         }
 
-        stage('Build') {
+        stage('Build Maven') {
             steps {
-                sh 'mvn -version'
-                sh 'mvn clean install -DskipTests'
+                sh 'mvn clean package -DskipTests'
             }
         }
 
-        stage('Test') {
+        stage('Build Docker Image') {
             steps {
-                sh 'echo Running tests...'
+                sh 'docker build -t jalelnasr/student-management:1.0.0 .'
             }
         }
 
-        stage('Package') {
+        stage('Run Docker Container') {
             steps {
-                sh 'echo Packaging completed.'
+                sh '''
+                docker rm -f student-management || true
+                docker run -d --name student-management -p 8080:8080 jalelnasr/student-management:1.0.0
+                '''
             }
         }
     }
 }
-
