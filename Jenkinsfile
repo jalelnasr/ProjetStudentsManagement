@@ -9,8 +9,7 @@ pipeline {
 
         stage('Checkout') {
             steps {
-                git branch: 'master',
-                    url: 'https://github.com/jalelnasr/ProjetStudentsManagement.git'
+                git url: 'https://github.com/jalelnasr/ProjetStudentsManagement.git', branch: 'master'
             }
         }
 
@@ -30,8 +29,9 @@ pipeline {
             steps {
                 sh '''
                 docker rm -f student-management || true
-                docker run -d --name student-management -p 8080:8080 jalelnasr/student-management:1.0.0
-
+                docker rm -f student-management || true
+                docker run -d --name student-management -p 9090:8089 jalelnasr/student-management:1.0.0
+ 
                 '''
             }
         }
