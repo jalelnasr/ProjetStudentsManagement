@@ -1,10 +1,6 @@
 pipeline {
     agent any
 
-    tools {
-        maven 'M2_HOME'
-    }
-
     environment {
         IMAGE_NAME = "jalelnasr/student-management"
         IMAGE_TAG  = "1.0.0"
@@ -27,13 +23,13 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                sh 'docker build -t $IMAGE_NAME:$IMAGE_TAG .'
+                sh 'docker build -t ${IMAGE_NAME}:${IMAGE_TAG} .'
             }
         }
 
         stage('Push Docker Image') {
             steps {
-                sh 'docker push $IMAGE_NAME:$IMAGE_TAG'
+                sh 'docker push ${IMAGE_NAME}:${IMAGE_TAG}'
             }
         }
     }
@@ -47,6 +43,7 @@ pipeline {
         }
     }
 }
+
 
 
 
