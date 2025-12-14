@@ -8,42 +8,39 @@ pipeline {
 
     stages {
 
-        stage('Checkout GitHub') {
+        stage("Checkout") {
             steps {
-                git branch: 'master',
-                    url: 'https://github.com/jalelnasr/ProjetStudentsManagement.git'
+                git branch: "master",
+                    url: "https://github.com/jalelnasr/ProjetStudentsManagement.git"
             }
         }
 
-        stage('Build Maven') {
+        stage("Build Maven") {
             steps {
-                sh 'mvn clean package -DskipTests'
+                sh "mvn clean package -DskipTests"
             }
         }
 
-        stage('Build Docker Image') {
+        stage("Build Docker Image") {
             steps {
-                sh 'docker build -t ${IMAGE_NAME}:${IMAGE_TAG} .'
+                sh "docker build -t ${IMAGE_NAME}:${IMAGE_TAG} ."
             }
         }
 
-        stage('Push Docker Image') {
+        stage("Push Docker Image") {
             steps {
-                sh 'docker push ${IMAGE_NAME}:${IMAGE_TAG}'
+                sh "docker push ${IMAGE_NAME}:${IMAGE_TAG}"
             }
         }
     }
 
     post {
         success {
-            echo '✅ Pipeline Docker terminé avec succès'
+            echo "✅ Build et Push Docker terminés avec succès"
         }
         failure {
-            echo '❌ Erreur dans le pipeline'
+            echo "❌ Échec du pipeline"
         }
     }
 }
-
-
-
 
