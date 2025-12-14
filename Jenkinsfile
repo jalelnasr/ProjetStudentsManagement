@@ -5,9 +5,14 @@ pipeline {
         maven 'M2_HOME'
     }
 
+    environment {
+        IMAGE_NAME = "jalelnasr/student-management"
+        IMAGE_TAG  = "1.0.0"
+    }
+
     stages {
 
-        stage('Checkout') {
+        stage('Checkout GitHub') {
             steps {
                 git branch: 'master',
                     url: 'https://github.com/jalelnasr/ProjetStudentsManagement.git'
@@ -22,48 +27,26 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                sh 'docker build -t jalelnasr/student-management:1.0.0 .'
+                sh 'docker build -t $IMAGE_NAME:$IMAGE_TAG .'
             }
         }
 
         stage('Push Docker Image') {
             steps {
-                withCredentials([
-                    usernamePassword(
-                        credentialsId: 'dockerhub-creds',
-                        usernameVariable: 'DOCKER_USER',
-                        passwordVariable: 'DOCKER_PASS'
-                    )
-                ]) {
-                    sh '''
-                      echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
-                      docker push jalelnasr/student-management:1.0.0
-                    '''
-                }
-            }
-        }
-
-        stage('Run Docker Container') {
-            steps {
-                sh '''
-                  docker rm -f student-management || true
-                  docker run -d \
-                    --name student-management \
-                    -p 9090:8089 \
-                    jalelnasr/student-management:1.0.0
-                '''
+                sh 'docker push $IMAGE_NAME:$IMAGE_TAG'
             }
         }
     }
 
     post {
         success {
-            echo '✅ Pipeline terminé avec succès'
+            echo '✅ Pipeline Docker terminé avec succès'
         }
         failure {
-            echo '❌ Pipeline échoué'
+            echo '❌ Erreur dans le pipeline'
         }
     }
 }
+
 
 
