@@ -23,18 +23,18 @@ pipeline {
         }
 
         stage("SonarQube Analysis") {
-    steps {
-        withSonarQubeEnv('sonar') {
-            sh '''
-              mvn sonar:sonar \
-              -Dsonar.projectKey=student-management \
-              -Dsonar.projectName=student-management \
-              -Dsonar.host.url=http://172.17.0.2:9000
-            '''
+            steps {
+                withSonarQubeEnv('sonar') {
+                    sh """
+                      mvn sonar:sonar \
+                      -Dsonar.projectKey=student-management \
+                      -Dsonar.projectName=student-management \
+                      -Dsonar.host.url=http://172.17.0.2:9000
+                    """
+                }
+            }
         }
-    }
-}
-    
+
         stage("Build Docker Image") {
             steps {
                 sh "docker build -t ${IMAGE_NAME}:${IMAGE_TAG} ."
@@ -49,9 +49,7 @@ pipeline {
 
         stage("Deploy to Kubernetes") {
             steps {
-                sh '''
-                  kubectl get ns ${KUBE_NAMESPACE} || kubectl create ns ${KUBE_NAMESPACE}
-
+                sh """
                   kubectl apply -f k8s/mysql-deployment.yaml -n ${KUBE_NAMESPACE}
                   kubectl apply -f k8s/mysql-service.yaml -n ${KUBE_NAMESPACE}
 
@@ -59,7 +57,7 @@ pipeline {
                   kubectl apply -f k8s/app-service.yaml -n ${KUBE_NAMESPACE}
 
                   kubectl rollout status deployment/student-app -n ${KUBE_NAMESPACE} --timeout=120s
-                '''
+                """
             }
         }
     }
