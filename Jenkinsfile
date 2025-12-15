@@ -28,8 +28,7 @@ pipeline {
                     sh '''
                       mvn sonar:sonar \
                       -Dsonar.projectKey=student-management \
-                      -Dsonar.projectName=student-management \
-                      -Dsonar.host.url=http://localhost:9000
+                      -Dsonar.projectName=student-management
                     '''
                 }
             }
@@ -66,10 +65,10 @@ pipeline {
 
     post {
         success {
-            echo "✅ CI/CD complet : Maven → Sonar → Docker → Kubernetes"
+            echo "✅ CI/CD COMPLET RÉUSSI"
         }
         failure {
-            echo "❌ Échec du pipeline"
+            echo "❌ PIPELINE ÉCHOUÉ"
         }
     }
 }
